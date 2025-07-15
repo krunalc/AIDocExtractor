@@ -13,6 +13,7 @@ namespace FileUploadReader.Interface
       _document = document;
     }
 
+
     public List<InvoiceField> ExtractFields()
     {
       var fields = new List<InvoiceField>();
