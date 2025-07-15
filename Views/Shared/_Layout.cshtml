@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Data Extractor</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FileUploadReader.styles.css" asp-append-version="true" />
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+
+        .footer {
+            flex-shrink: 0;
+            background-color: #f8f9fa;
+            width: 100%;
+            white-space: nowrap;
+            line-height: 60px;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .hero-background {
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-box {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 60px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            max-width: 1000px;
+            width: 90%;
+        }
+
+            .hero-box h1 {
+                font-size: 48px;
+                font-weight: 700;
+                margin-bottom: 20px;
+            }
+
+            .hero-box p {
+                font-size: 20px;
+                line-height: 1.6;
+                margin-bottom: 40px;
+            }
+
+        .cta-buttons a {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 12px 28px;
+            background-color: #ff8c00;
+            color: white;
+            font-weight: bold;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+            .cta-buttons a:hover {
+                background-color: #e67600;
+            }
+    </style>
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    @* Main content area starts here *@
+    <main role="main" class="pb-3">
+        <div class="container" style="max-width:1800px">
+            @if (ViewContext.RouteData.Values["controller"]?.ToString() == "Home" &&
+            ViewContext.RouteData.Values["action"]?.ToString() == "Index")
+            {
+                <div class="hero-background">
+                    <div class="hero-box">
+                        <h1>Welcome to Data Extractor</h1>
+                        <p>Effortlessly extract data from Invoices, Business Cards, Identity Documents and other documents using Azure AI Document Intelligence.</p>
+                        <div class="cta-buttons">
+                            <a asp-controller="Invoice" asp-action="Index">Try Invoice</a>
+                            <a asp-controller="BusinessCard" asp-action="Index">Try Business Card</a>
+                            <a asp-controller="Identity" asp-action="Index">Try Identity</a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="footer text-muted">
+        <div class="container">
+            &copy; 2025 - DataExtractor - Developed By : iKart Solutions
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

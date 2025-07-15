@@ -1,0 +1,171 @@
+using Azure.AI.FormRecognizer.DocumentAnalysis;
+using Azure;
+
+using Microsoft.AspNetCore.Mvc;
+using FileUploadReader.Interface;
+using FileUploadReader.ViewModels;
+
+namespace FileUploadReader.Controllers
+{
+  public class IdentityController : Controller
+  {
+    private readonly IWebHostEnvironment _environment;
+    private readonly AzureCognitiveSettings _azureSettings;
+
+    public IdentityController(IWebHostEnvironment environment, AzureCognitiveSettings azureSettings)
+    {
+      _environment = environment;
+      _azureSettings = azureSettings;
+    }
+
+    public IActionResult Index()
+    {
+      if (TempData["UploadedFilePath"] is string filePath)
+      {
+        ViewBag.UploadedFilePath = filePath;
+      }
+      if (TempData["ExtractedFields"] is string extractedFieldJson)
+      {
+        var extractedItems = System.Text.Json.JsonSerializer.Deserialize<List<InvoiceField>>(extractedFieldJson);
+        ViewBag.ExtractedFields = extractedItems;
+      }
+
+      return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UploadIdentityCard(IFormFile file)
+    {
+      if (file != null && file.Length > 0)
+      {
+        var uploads = Path.Combine(_environment.WebRootPath, "uploads");
+        Directory.CreateDirectory(uploads);
+
+        var filePath = Path.Combine(uploads, file.FileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+          await file.CopyToAsync(stream);
+        }
+
+        TempData["UploadedFilePath"] = $"/uploads/{file.FileName}";
+        ViewBag.UploadedFilePath = $"/uploads/{file.FileName}";
+        HttpContext.Session.SetString("UploadedFilePath", $"/uploads/{file.FileName}");
+      }
+
+      return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AnalyzeIdentityCard()
+    {
+      var relativePath = HttpContext.Session.GetString("UploadedFilePath");
+      if (string.IsNullOrEmpty(relativePath))
+      {
+        TempData["Error"] = "No file uploaded.";
+        return RedirectToAction("Index");
+      }
+
+      var fullPath = Path.Combine(_environment.WebRootPath, relativePath.TrimStart('/'));
+
+      var endpoint = _azureSettings.Endpoint;
+      var key = _azureSettings.Key;
+
+      var credential = new AzureKeyCredential(key);
+      var client = new DocumentAnalysisClient(new Uri(endpoint), credential);
+
+      using var stream = new FileStream(fullPath, FileMode.Open);
+
+      AnalyzeDocumentOperation operation = await client.AnalyzeDocumentAsync(
+          WaitUntil.Completed,
+          "prebuilt-idDocument",
+          stream);
+
+      Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzeResult result = operation.Value;
+
+      AnalyzedDocument doc = result.Documents.First();
+      IInvoiceAdapter adapter = new SdkIdentityAdapter(doc);
+
+      List<InvoiceField> fields;
+      fields = adapter.ExtractFields();
+
+      // Also keep the file path to keep preview after post
+      TempData["UploadedFilePath"] = relativePath;
+      TempData["ExtractedFields"] = System.Text.Json.JsonSerializer.Serialize(fields);
+      return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AnalyzeIdentityCardAPI()
+    {
+      var relativePath = HttpContext.Session.GetString("UploadedFilePath");
+      var fullPath = Path.Combine(_environment.WebRootPath, relativePath.TrimStart('/'));
+
+      if (string.IsNullOrEmpty(fullPath))
+      {
+        TempData["Error"] = "No file uploaded.";
+        return RedirectToAction("Index");
+      }
+
+      var dataHelperResponse = await DataHelper.DataHelper.AnalyzeDocumentAsync<IdentityRootResponse>(fullPath, "prebuilt-idDocument");
+
+      if (dataHelperResponse.Data == null || !dataHelperResponse.Result)
+      {
+        TempData["Error"] = dataHelperResponse.Message;
+        return RedirectToAction("Index");
+      }
+
+      var root = dataHelperResponse.Data;
+      DocumentI doc = root?.AnalyzeResult.Documents.First();
+
+      IInvoiceAdapter adapter = new ApiIdentityAdapter(doc);
+
+      List<InvoiceField> fields;
+      fields = adapter.ExtractFields();
+
+      TempData["UploadedFilePath"] = relativePath;
+      TempData["ExtractedFields"] = System.Text.Json.JsonSerializer.Serialize(fields);
+      return RedirectToAction("Index");
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> AnalyzeIdentityCardCustomAPI()
+    {
+      var relativePath = HttpContext.Session.GetString("UploadedFilePath");
+      if (string.IsNullOrEmpty(relativePath))
+      {
+        TempData["Error"] = "No file uploaded.";
+        return RedirectToAction("Index");
+      }
+
+      var fullPath = Path.Combine(_environment.WebRootPath, relativePath.TrimStart('/'));
+
+      var endpoint = _azureSettings.Endpoint;
+      var key = _azureSettings.Key;
+
+      var credential = new AzureKeyCredential(key);
+      var client = new DocumentAnalysisClient(new Uri(endpoint), credential);
+
+      using var stream = new FileStream(fullPath, FileMode.Open);
+
+      AnalyzeDocumentOperation operation = await client.AnalyzeDocumentAsync(
+          WaitUntil.Completed,
+          "CustomPAN",
+          stream);
+
+      Azure.AI.FormRecognizer.DocumentAnalysis.AnalyzeResult result = operation.Value;
+
+      AnalyzedDocument doc = result.Documents.First();
+      IInvoiceAdapter adapter = new SdkIdentityAdapter(doc);
+
+      List<InvoiceField> fields;
+      fields = adapter.ExtractFields();
+
+      // Also keep the file path to keep preview after post
+      TempData["UploadedFilePath"] = relativePath;
+      TempData["ExtractedFields"] = System.Text.Json.JsonSerializer.Serialize(fields);
+      return RedirectToAction("Index");
+    }
+  }
+}
