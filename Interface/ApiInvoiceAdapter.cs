@@ -37,16 +37,16 @@ namespace FileUploadReader.Interface
         });
       }
 
-      if (_document.Fields.TryGetValue("VendorAddressRecipient", out var vendorAddressRec) &&
-              vendorAddressRec != null)
-      {
-        fields.Add(new InvoiceField
-        {
-          Key = "Vendor Address Recipient",
-          Value = vendorAddressRec.Content,
-          Confidence = vendorAddressRec.Confidence
-        });
-      }
+      //if (_document.Fields.TryGetValue("VendorAddressRecipient", out var vendorAddressRec) &&
+      //        vendorAddressRec != null)
+      //{
+      //  fields.Add(new InvoiceField
+      //  {
+      //    Key = "Vendor Address Recipient",
+      //    Value = vendorAddressRec.Content,
+      //    Confidence = vendorAddressRec.Confidence
+      //  });
+      //}
 
       if (_document.Fields.TryGetValue("VendorPhoneNumber", out var vendorPhone) &&
              vendorPhone != null)
@@ -119,7 +119,7 @@ namespace FileUploadReader.Interface
       {
         fields.Add(new InvoiceField
         {
-          Key = "Vendor Address Recipient",
+          Key = "Shipping Address Recipient",
           Value = shipAddRec.Content,
           Confidence = shipAddRec.Confidence
         });
