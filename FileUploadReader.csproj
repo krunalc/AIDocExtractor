@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Documents\" />
-    <Folder Include="wwwroot\uploads\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Azure.AI.DocumentIntelligence" Version="1.0.0" />
     <PackageReference Include="Azure.AI.FormRecognizer" Version="4.1.0" />
   </ItemGroup>

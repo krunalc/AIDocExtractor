@@ -33,8 +33,9 @@ namespace FileUploadReader.DataHelper
         using var httpClient = new HttpClient();
         httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.Key);
 
-        //string analyzeUrl = $"{_settings.BaseURL}/{modelName}:analyze?api-version=2023-07-31";
-        string analyzeUrl = $"{_settings.BaseURL}/{modelName}:analyze?api-version=2024-07-31-preview";
+        string analyzeUrl = $"{_settings.BaseURL}/{modelName}:analyze?api-version=2023-07-31";
+        //string analyzeUrl = $"{_settings.BaseURL}/{modelName}:analyze?api-version=2024-07-31-preview";
+
         var analyzeRequest = new
         {
           base64Source = base64Image

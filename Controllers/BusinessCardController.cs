@@ -1,4 +1,4 @@
-using Azure;
+﻿using Azure;
 using Microsoft.AspNetCore.Mvc;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
 using System.Net;
@@ -32,30 +32,85 @@ namespace FileUploadReader.Controllers
       return View();
     }
 
-    [HttpPost]
-    public async Task<IActionResult> UploadBusinessCard(IFormFile file)
-    {
-      if (file != null && file.Length > 0)
-      {
-        var uploads = Path.Combine(_environment.WebRootPath, "uploads");
-        Directory.CreateDirectory(uploads);
-
-        var filePath = Path.Combine(uploads, file.FileName);
-
-        using (var stream = new FileStream(filePath, FileMode.Create))
+        [HttpPost]
+        public async Task<IActionResult> UploadBusinessCard(IFormFile file, string sampleFilePath)
         {
-          await file.CopyToAsync(stream);
+            if (file != null && file.Length > 0)
+            {
+                var uploads = Path.Combine(_environment.WebRootPath, "uploads");
+                Directory.CreateDirectory(uploads);
+
+                var filePath = Path.Combine(uploads, file.FileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                TempData["UploadedFilePath"] = $"/uploads/{file.FileName}";
+                ViewBag.UploadedFilePath = $"/uploads/{file.FileName}";
+                HttpContext.Session.SetString("UploadedFilePath", $"/uploads/{file.FileName}");
+            }
+            
+            else if (!string.IsNullOrEmpty(sampleFilePath))
+            {
+                var normalizedPath = sampleFilePath
+                    .Replace("~", string.Empty)
+                    .TrimStart('/', '\\')
+                    .Replace('/', Path.DirectorySeparatorChar)
+                    .Replace('\\', Path.DirectorySeparatorChar);
+
+                var sourcePath = Path.Combine(_environment.WebRootPath, normalizedPath);
+
+                if (System.IO.File.Exists(sourcePath))
+                {
+                    var uploads = Path.Combine(_environment.WebRootPath, "uploads");
+                    Directory.CreateDirectory(uploads);
+
+                    var fileName = Path.GetFileName(sourcePath);
+                    var destinationPath = Path.Combine(uploads, fileName);
+
+                    if (System.IO.File.Exists(destinationPath))
+                    {
+                        try
+                        {
+                            System.IO.File.Delete(destinationPath);
+                        }
+                        catch (IOException)
+                        {
+                            var nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                            var ext = Path.GetExtension(fileName);
+                            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                            destinationPath = Path.Combine(uploads, $"{nameWithoutExt}_{timestamp}{ext}");
+                        }
+                    }
+
+                    using (var sourceStream = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (var destStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        await sourceStream.CopyToAsync(destStream);
+                    }
+
+                    var fileNameOnly = Path.GetFileName(destinationPath);
+                    TempData["UploadedFilePath"] = $"/uploads/{fileNameOnly}";
+                    ViewBag.UploadedFilePath = $"/uploads/{fileNameOnly}";
+                    HttpContext.Session.SetString("UploadedFilePath", $"/uploads/{fileNameOnly}");
+                }
+                else
+                {
+                    TempData["Error"] = $"Sample business card file not found: {sourcePath}";
+                }
+            }
+            else
+            {
+                TempData["Error"] = "Please upload or select a sample business card.";
+            }
+
+            return RedirectToAction("Index");
         }
 
-        TempData["UploadedFilePath"] = $"/uploads/{file.FileName}";
-        ViewBag.UploadedFilePath = $"/uploads/{file.FileName}";
-        HttpContext.Session.SetString("UploadedFilePath", $"/uploads/{file.FileName}");
-      }
 
-      return RedirectToAction("Index");
-    }
-
-    [HttpPost]
+        [HttpPost]
     public async Task<IActionResult> AnalyzeBusinessCard()
     {
       var relativePath = HttpContext.Session.GetString("UploadedFilePath");

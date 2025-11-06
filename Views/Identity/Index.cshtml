@@ -33,6 +33,26 @@
     border-radius: 8px;
     padding: 15px;
     }
+
+        .sample-card {
+            background-color: #f5bc42;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 6px;
+            color: #333;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+            .sample-card:hover {
+                border-color: #ff8c00;
+                box-shadow: 0 6px 12px rgba(255, 140, 0, 0.25);
+                transform: translateY(-3px);
+            }
 </style>
 }
 
@@ -94,6 +114,24 @@
 
     <div class="row">
         <div class="col-md-6">
+            <h5 class="fw-bold mb-2">Select a Sample Business Card</h5>
+
+            <div class="d-flex gap-3 mb-3">
+                <form asp-controller="Identity" asp-action="UploadIdentityCard" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="sampleFilePath" value="~\\sample\\Identity1.jpg" />
+                    <button type="submit" class="btn btn-warning text-white sample-card">Sample card 1</button>
+                </form>
+
+                <form asp-controller="Identity" asp-action="UploadIdentityCard" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="sampleFilePath" value="~\\sample\\Identity2.jpg" />
+                    <button type="submit" class="btn btn-warning text-white sample-card">Sample card 2</button>
+                </form>
+
+                <form asp-controller="Identity" asp-action="UploadIdentityCard" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="sampleFilePath" value="~\\sample\\Identity3.jpg" />
+                    <button type="submit" class="btn btn-warning text-white sample-card">Sample card 3</button>
+                </form>
+            </div>
             <h5 class="fw-bold mb-2">File Preview</h5>
             <div class="preview-box">
                 @if (!string.IsNullOrEmpty(filePath))
