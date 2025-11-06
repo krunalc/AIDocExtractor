@@ -33,7 +33,8 @@ namespace FileUploadReader.DataHelper
         using var httpClient = new HttpClient();
         httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _settings.Key);
 
-        string analyzeUrl = $"{_settings.BaseURL}/{modelName}:analyze?api-version=2023-07-31";
+        //string analyzeUrl = $"{_settings.BaseURL}/{modelName}:analyze?api-version=2023-07-31";
+        string analyzeUrl = $"{_settings.BaseURL}/{modelName}:analyze?api-version=2024-07-31-preview";
         var analyzeRequest = new
         {
           base64Source = base64Image
@@ -42,7 +43,7 @@ namespace FileUploadReader.DataHelper
         var content = new StringContent(JsonSerializer.Serialize(analyzeRequest), Encoding.UTF8, "application/json");
         var response = await httpClient.PostAsync(analyzeUrl, content);
 
-        await Task.Delay(2000);
+        await Task.Delay(5000);
         if (response.StatusCode != HttpStatusCode.Accepted)
         {
           var m = response.Content.ReadAsStringAsync();
