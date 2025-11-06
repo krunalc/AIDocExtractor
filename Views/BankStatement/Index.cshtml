@@ -1,6 +1,6 @@
-@using FileUploadReader.ViewModels
+﻿@using FileUploadReader.ViewModels
 @{
-    ViewData["Title"] = "Business Card Page";
+    ViewData["Title"] = "Bank Statement Page";
     var filePath = ViewBag.UploadedFilePath as string;
 }
 
@@ -53,34 +53,26 @@
     </script>
 }
 
-
 <div class="container invoice-section">
 
     <div class="text-center mb-2">
-        <h2 class="invoice-header">Business Card Analyzer</h2>
+        <h2 class="invoice-header">Bank Statement Analyzer</h2>
     </div>
 
-    @* here put back button *@
     <div class="row align-items-center mb-3">
 
-        <!-- Back to Home (left aligned) -->
         <div class="col-auto">
             <a asp-controller="Home" asp-action="Index" class="btn btn-warning text-white" style="background-color:#ff8c00;">← Back to Home</a>
         </div>
 
-        <!-- Right aligned button group -->
         <div class="col d-flex justify-content-center gap-2">
 
-            <form id="uploadForm" asp-controller="BusinessCard" asp-action="UploadBusinessCard" method="post" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
+            <form id="uploadForm" asp-controller="BankStatement" asp-action="UploadBankStatement" method="post" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
                 <input type="file" name="file" class="form-control" style="width: 250px;" onchange="document.getElementById('uploadForm').submit();" />
             </form>
 
-            <form asp-controller="BusinessCard" asp-action="AnalyzeBusinessCard" method="post" onsubmit="showLoader()">
+            <form asp-controller="BankStatement" asp-action="AnalyzeBankStatement" method="post" onsubmit="showLoader()">
                 <button type="submit" class="btn btn-warning text-white" style="background-color:#ff8c00;">Abstract Info (SDK)</button>
-            </form>
-
-            <form asp-controller="BusinessCard" asp-action="AnalyzeBusinessCardAPI" method="post" onsubmit="showLoader()">
-                <button type="submit" class="btn btn-warning text-white" style="background-color:#ff8c00;">Abstract Info (API)</button>
             </form>
 
         </div>
@@ -148,8 +140,46 @@
                             </div>
                         </div>
                     }
+
+
                 </div>
             }
+
+            @if (ViewBag.ExtractedTransactions is List<BankTransaction> transactions && transactions.Count > 0)
+            {
+                <h5 class="fw-bold mt-4 mb-2">Extracted Transactions</h5>
+
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-bordered table-hover table-sm" style="min-width: 1000px;">
+                        <thead class="table-light text-center">
+                            <tr>
+                                <th style="width: 120px;">Date</th>
+                                <th style="width: 200px;">Withdrawal</th>
+                                <th>Description</th>
+                                <th style="width: 150px;">Check/Ref</th>
+                                <th style="width: 150px;">Deposit</th>
+                                <th style="width: 100px;">Conf.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var tx in transactions)
+                            {
+                                <tr>
+                                    <td>@tx.Date?.ToString("dd MMM yyyy")</td>
+                                    <td class="text-danger">@((tx.WithdrawalAmount.HasValue && tx.WithdrawalAmount > 0) ? $"{tx.WithdrawalAmount:C}" : "")</td>
+                                    <td>
+                                        <div>@tx.Description</div>
+                                    </td>
+                                    <td>@tx.CheckNumber</td>
+                                    <td class="text-success text-end">@((tx.DepositAmount.HasValue && tx.DepositAmount > 0) ? $"{tx.DepositAmount:C}" : "")</td>
+                                    <td class="text-center">@($"{(tx.Confidence ?? 0):P0}")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
         </div>
     </div>
 </div>
