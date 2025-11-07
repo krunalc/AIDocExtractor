@@ -35,7 +35,9 @@
         }
 
         .sample-invoice {
-            background-color: #f5bc42;
+            background-color: #ffffffd0;
+            color: #000;
+            /* background-color: #45db73;
             border: 2px solid transparent;
             border-radius: 12px;
             padding: 6px;
@@ -44,15 +46,15 @@
             transition: all 0.25s ease;
             cursor: pointer;
             margin-right: 10px;
-            margin-bottom: 10px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 5px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); */
         }
 
-            .sample-invoice:hover {
-                border-color: #ff8c00;
-                box-shadow: 0 6px 12px rgba(255, 140, 0, 0.25);
+           /*  .sample-invoice:hover {
+                border-color: #14b144; 
+                 box-shadow: 0 6px 12px rgba(255, 140, 0, 0.25); 
                 transform: translateY(-3px);
-            }
+            } */
 
     </style>
 }
@@ -100,17 +102,17 @@
             <div class="d-flex gap-3 mb-3">
                 <form asp-controller="Invoice" asp-action="UploadInvoice" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="sampleFilePath" value="~\\sample\\Invoice1.pdf" />
-                    <button type="submit" class="btn btn-warning text-white sample-invoice">Sample Invoice 1</button>
+                    <button type="submit" class="btn sample-invoice">Sample Invoice 1</button>
                 </form>
 
                 <form asp-controller="Invoice" asp-action="UploadInvoice" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="sampleFilePath" value="~/sample/Invoice2.pdf" />
-                    <button type="submit" class="btn btn-warning text-white sample-invoice">Sample Invoice 2</button>
+                    <button type="submit" class="btn sample-invoice">Sample Invoice 2</button>
                 </form>
 
                 <form asp-controller="Invoice" asp-action="UploadInvoice" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="sampleFilePath" value="~/sample/invoice.pdf" />
-                    <button type="submit" class="btn btn-warning text-white sample-invoice">Sample Invoice 3</button>
+                    <button type="submit" class="btn sample-invoice">Sample Invoice 3</button>
                 </form>
             </div>
 

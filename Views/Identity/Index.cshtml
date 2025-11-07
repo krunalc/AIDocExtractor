@@ -35,9 +35,11 @@
     }
 
         .sample-card {
-            background-color: #f5bc42;
+            background-color: #ffffffd0;
+            color: #000;
+            /* background-color: #45db73;
             border: 2px solid transparent;
-            border-radius: 12px;
+            border-radius: 12px; 
             padding: 6px;
             color: #333;
             font-weight: 600;
@@ -45,14 +47,14 @@
             cursor: pointer;
             margin-right: 10px;
             margin-bottom: 10px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); */
         }
 
-            .sample-card:hover {
-                border-color: #ff8c00;
-                box-shadow: 0 6px 12px rgba(255, 140, 0, 0.25);
+           /*  .sample-card:hover {
+                border-color: #14b144;
+                box-shadow: 0 6px 12px rgba(255, 140, 0, 0.25); 
                 transform: translateY(-3px);
-            }
+            } */
 </style>
 }
 
@@ -119,17 +121,17 @@
             <div class="d-flex gap-3 mb-3">
                 <form asp-controller="Identity" asp-action="UploadIdentityCard" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="sampleFilePath" value="~\\sample\\Identity1.jpg" />
-                    <button type="submit" class="btn btn-warning text-white sample-card">Sample card 1</button>
+                    <button type="submit" class="btn sample-card">Sample card 1</button>
                 </form>
 
                 <form asp-controller="Identity" asp-action="UploadIdentityCard" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="sampleFilePath" value="~\\sample\\Identity2.jpg" />
-                    <button type="submit" class="btn btn-warning text-white sample-card">Sample card 2</button>
+                    <button type="submit" class="btn sample-card">Sample card 2</button>
                 </form>
 
                 <form asp-controller="Identity" asp-action="UploadIdentityCard" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="sampleFilePath" value="~\\sample\\Identity3.jpg" />
-                    <button type="submit" class="btn btn-warning text-white sample-card">Sample card 3</button>
+                    <button type="submit" class="btn sample-card">Sample card 3</button>
                 </form>
             </div>
             <h5 class="fw-bold mb-2">File Preview</h5>

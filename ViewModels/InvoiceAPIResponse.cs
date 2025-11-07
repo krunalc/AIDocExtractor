@@ -33,6 +33,7 @@ namespace FileUploadReader.ViewModels
     public string ValueString { get; set; }
     public double? ValueNumber { get; set; }
     public string ValuePhoneNumber { get; set; }
+    public string ValueCountryRegion { get; set; }
     public string ValueDate { get; set; }
     public ValueAddress ValueAddress { get; set; }
     public float Confidence { get; set; }

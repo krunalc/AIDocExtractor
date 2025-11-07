@@ -81,7 +81,7 @@ namespace FileUploadReader.Interface
         fields.Add(new InvoiceField
         {
           Key = "Country Region",
-          Value = c.Content,
+          Value = c.ValueCountryRegion,
           Confidence = c.Confidence
         });
       }
@@ -118,15 +118,15 @@ namespace FileUploadReader.Interface
         });
       }
 
-      if (_document.Fields.TryGetValue("Region", out var r) && r != null)
-      {
-        fields.Add(new InvoiceField
-        {
-          Key = "Region",
-          Value = r.Content,
-          Confidence = r.Confidence
-        });
-      }
+      //if (_document.Fields.TryGetValue("Region", out var r) && r != null)
+      //{
+      //  fields.Add(new InvoiceField
+      //  {
+      //    Key = "Region",
+      //    Value = r.Content,
+      //    Confidence = r.Confidence
+      //  });
+      //}
 
     
 

@@ -36,6 +36,7 @@ namespace FileUploadReader.ViewModels
     public Dictionary<string, FieldI> ValueObject { get; set; }   // For objects like FirstName/LastName
     public string ValueString { get; set; }                      // For string values
     public string ValuePhoneNumber { get; set; }                 // For phone numbers
+    public string ValueCountryRegion { get; set; }                 // For phone numbers
   }
 
   public class FieldItemI
