@@ -81,13 +81,24 @@ namespace FileUploadReader.Interface
 
       if (_document.Fields.TryGetValue("CountryRegion", out var cou) && cou != null)
       {
-        fields.Add(new InvoiceField
-        {
-          Key = "Country Region",
-          Value = cou.Content?.ToString(),
-          Confidence = cou.Confidence
-        });
-      }
+                var internalValueProp = cou.Value.GetType().GetProperty("InternalValue",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+                var internalValue = internalValueProp?.GetValue(cou.Value);
+
+                fields.Add(new InvoiceField
+                {
+                    Key = "Country Region",
+                    Value = internalValue?.ToString(), // This will give you "USA"
+                    Confidence = cou.Confidence
+                });
+                //fields.Add(new InvoiceField
+                //{
+                //  Key = "Country Region",
+                //  Value = cou.Value.ToString(),
+                //  Confidence = cou.Confidence
+                //});
+            }
 
       if (_document.Fields.TryGetValue("DateOfExpiration", out var date) && date != null)
       {
@@ -122,15 +133,15 @@ namespace FileUploadReader.Interface
 
       
 
-      if (_document.Fields.TryGetValue("Region", out var reg) && reg != null)
-      {
-        fields.Add(new InvoiceField
-        {
-          Key = "Region",
-          Value = reg.Content?.ToString(),
-          Confidence = reg.Confidence
-        });
-      }
+      //if (_document.Fields.TryGetValue("Region", out var reg) && reg != null)
+      //{
+      //  fields.Add(new InvoiceField
+      //  {
+      //    Key = "Region",
+      //    Value = reg.Content?.ToString(),
+      //    Confidence = reg.Confidence
+      //  });
+      //}
 
      
       return fields;
